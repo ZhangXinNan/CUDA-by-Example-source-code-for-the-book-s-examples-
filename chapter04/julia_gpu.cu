@@ -57,6 +57,7 @@ __global__ void kernel( unsigned char *ptr ) {
     // map from blockIdx to pixel position
     int x = blockIdx.x;
     int y = blockIdx.y;
+	printf("blockIdx.x %d, blockIdx.y %d \n", x, y);
     int offset = x + y * gridDim.x;
 
     // now calculate the value at that position
@@ -75,13 +76,14 @@ struct DataBlock {
 int main( void ) {
     DataBlock   data;
     CPUBitmap bitmap( DIM, DIM, &data );
-    unsigned char    *dev_bitmap;
+    unsigned char    *dev_bitmap;           // 保存设备上数据的副本
 
     HANDLE_ERROR( cudaMalloc( (void**)&dev_bitmap, bitmap.image_size() ) );
     data.dev_bitmap = dev_bitmap;
 
     dim3    grid(DIM,DIM);
     kernel<<<grid,1>>>( dev_bitmap );
+    // 指定了多个并行线程块来执行函数kernel()。
 
     HANDLE_ERROR( cudaMemcpy( bitmap.get_ptr(), dev_bitmap,
                               bitmap.image_size(),

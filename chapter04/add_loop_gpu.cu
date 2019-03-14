@@ -22,6 +22,7 @@ __global__ void add( int *a, int *b, int *c ) {
     int tid = blockIdx.x;    // this thread handles the data at its thread id
     if (tid < N)
         c[tid] = a[tid] + b[tid];
+	printf("blockIdx: %d %d %d %d\n", tid, a[tid], b[tid], c[tid]);
 }
 
 int main( void ) {
